@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">ProductsList</string>
+
+    <!--  Start Fragment  -->
+    <string name="btn_download">Download</string>
+
+    <!--  List Fragment  -->
+    <string name="btn_clear">Clear</string>
+
+</resources>
