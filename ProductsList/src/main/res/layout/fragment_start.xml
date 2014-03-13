@@ -21,6 +21,7 @@
         android:id="@+id/pb_download"
         android:visibility="invisible"
         android:paddingTop="16dp"
+        android:indeterminate="true"
         android:layout_below="@+id/btn_download"
         android:layout_centerHorizontal="true"/>
 

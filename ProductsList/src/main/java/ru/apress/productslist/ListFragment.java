@@ -23,12 +23,12 @@ import com.nostra13.universalimageloader.core.ImageLoader;
  */
 public class ListFragment extends Fragment {
     private final String TAG = "ListFragment";
-    private final boolean D = true;
+    private final boolean D = false;
 
     private ListView mProductsList;
     private Button mClearBtn;
 
-    private ProductObj[] mProductObjs;
+    private Product[] mProducts;
     private ProductsAdapter mAdapter;
 
     public ListFragment() {
@@ -39,27 +39,28 @@ public class ListFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if(D) Log.v(TAG, "onCreate");
-        mAdapter = new ProductsAdapter();
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,  Bundle savedInstanceState) {
         if(D) Log.v(TAG, "onCreateView");
-        View view = inflater.inflate(R.layout.fragment_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_main, container, false);
 
         mProductsList = (ListView) view.findViewById(R.id.lv_products);
         mClearBtn = (Button) view.findViewById(R.id.btn_clear);
 
+        mAdapter = new ProductsAdapter();
         mProductsList.setAdapter(mAdapter);
 
         return view;
     }
 
 
-    public void updateWithNewData(ProductObj[] productObjs) {
+    public void updateWithNewData(Product[] productObjs) {
         if(D) Log.v(TAG, "updateWithNewData");
-        mProductObjs = productObjs;
-        mAdapter.notifyDataSetChanged();
+        mProducts = productObjs;
+        if (mAdapter != null) mAdapter.notifyDataSetChanged();
     }
 
     private class ProductsAdapter extends BaseAdapter {
@@ -75,17 +76,17 @@ public class ListFragment extends Fragment {
 
         @Override
         public int getCount() {
-            if (mProductObjs != null) {
-                return mProductObjs.length;
+            if (mProducts != null) {
+                return mProducts.length;
             } else {
                 return 0;
             }
         }
 
         @Override
-        public ProductObj getItem(int position) {
-            if (mProductObjs != null && mProductObjs.length > 0) {
-                return mProductObjs[position];
+        public Product getItem(int position) {
+            if (mProducts != null && mProducts.length > 0) {
+                return mProducts[position];
             } else {
                 return null;
             }
@@ -99,7 +100,7 @@ public class ListFragment extends Fragment {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             if(D) Log.v(TAG, "getView");
-            if(D) Log.d(TAG, "position = " + position);
+//            if(D) Log.d(TAG, "position = " + position);
             ViewHolder holder;
             if (convertView == null) {
                 convertView = mInflater.inflate(R.layout.list_item_products, null);
@@ -115,7 +116,7 @@ public class ListFragment extends Fragment {
                 holder = (ViewHolder) convertView.getTag();
             }
 
-            ProductObj productObj = getItem(position);
+            Product productObj = getItem(position);
             int imagesCnt = productObj.getImagesCnt();
             String imagesCntStr = String.format(getString(R.string.images_cnt), imagesCnt);
             String imageUri = productObj.getImages()[0].getPathThumb();

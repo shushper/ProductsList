@@ -1,66 +1,97 @@
 package ru.apress.productslist;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
-import com.nostra13.universalimageloader.core.assist.ImageScaleType;
+import ru.apress.productslist.DownloadTaskFragment.DownloadTaskFragmentListener;
+import ru.apress.productslist.MainFragment.MainFragmentListener;
 
 
-public class MainActivity extends ActionBarActivity implements StartFragment.StartFragmentListener{
+public class MainActivity extends ActionBarActivity implements MainFragmentListener, DownloadTaskFragmentListener {
+    private final String TAG = "MainActivity";
+    private final boolean D = true;
 
-    private StartFragment mStartFragment;
+    private MainFragment mMainFragment;
     private ListFragment mListFragment;
+    private DownloadTaskFragment mDownloadFragment;
+
+    private FragmentManager mFragmentManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        FragmentManager fm = getSupportFragmentManager();
-        mStartFragment = (StartFragment) fm.findFragmentById(R.id.start_fragment);
-        mListFragment = (ListFragment) fm.findFragmentById(R.id.list_fragment);
+        mFragmentManager = getSupportFragmentManager();
+        mMainFragment     = new MainFragment();
+        mListFragment     = new ListFragment();
+        mDownloadFragment = (DownloadTaskFragment) mFragmentManager.findFragmentByTag("DownloadTaskFragment");
 
-        hideFragment(mListFragment);
-        initImageLoader();
+        if (mDownloadFragment == null) {
+            if(D) Log.i(TAG, "DownloadFragment doesn't exist. Create new one.");
+            mDownloadFragment = new DownloadTaskFragment();
+            mFragmentManager.beginTransaction().add(mDownloadFragment, "DownloadTaskFragment").commit();
+        }
+
+        boolean productsDownloaded = mDownloadFragment.productsDownloaded();
+
+        if (!productsDownloaded) {
+            showMainFragment();
+        } else {
+            showListFragment();
+            mListFragment.updateWithNewData(mDownloadFragment.getProductObjs());
+        }
     }
 
-    private void initImageLoader() {
-        DisplayImageOptions options = new DisplayImageOptions.Builder()
-                .imageScaleType(ImageScaleType.IN_SAMPLE_POWER_OF_2)
-                .resetViewBeforeLoading(true)
-                .cacheInMemory(true)
-                .build();
+    private void showMainFragment(){
+        FragmentTransaction ft = mFragmentManager.beginTransaction();
+        ft.replace(R.id.fragment_container, mMainFragment);
+        ft.commit();
+    }
 
-        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this)
-                .defaultDisplayImageOptions(options)
-                .build();
-
-        ImageLoader.getInstance().init(config);
+    private void showListFragment() {
+        FragmentTransaction ft = mFragmentManager.beginTransaction();
+        ft.replace(R.id.fragment_container, mListFragment);
+        ft.commit();
     }
 
     @Override
-    public void onProductsListDownloaded(ProductObj[] productObjs) {
-        hideFragment(mStartFragment);
-        showFragment(mListFragment);
-
-        mListFragment.updateWithNewData(productObjs);
+    public void onDownloadBtnClick() {
+        startDownloadFile();
     }
 
-    private void hideFragment(Fragment f) {
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.hide(f);
-        ft.commit();
+    @Override
+    public void onPreExecute() {
+        mMainFragment.setProgressVisible(true);
+        mMainFragment.setDownloadBtnEnable(false);
     }
 
-    private void showFragment(Fragment f) {
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.show(f);
-        ft.commit();
+    @Override
+    public void onPostExecute() {
+        mMainFragment.setProgressVisible(false);
+        mMainFragment.setDownloadBtnEnable(true);
+
+        boolean productsDownloaded = mDownloadFragment.productsDownloaded();
+
+        if (productsDownloaded) {
+            showListFragment();
+            mListFragment.updateWithNewData(mDownloadFragment.getProductObjs());
+        }
+    }
+
+    @Override
+    public void onCancelled() {
+        mMainFragment.setProgressVisible(false);
+        mMainFragment.setDownloadBtnEnable(true);
+    }
+
+    private void startDownloadFile() {
+        if(D) Log.v(TAG, "startDownloadFile");
+        if (mDownloadFragment != null) {
+            mDownloadFragment.starDownload();
+        }
     }
 }

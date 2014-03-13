@@ -3,9 +3,9 @@ package ru.apress.productslist;
 /**
  * Created by shushper on 12.03.14.
  */
-public class ImageObj {
+public class Image {
     private int mId;
-    private int mPos;
+    private int mPosition;
     private String mPathThumb;
     private String mPathBig;
 
@@ -17,12 +17,12 @@ public class ImageObj {
         this.mId = id;
     }
 
-    public int getPos() {
-        return mPos;
+    public int getPosition() {
+        return mPosition;
     }
 
-    public void setPos(int pos) {
-        this.mPos = pos;
+    public void setPos(int position) {
+        this.mPosition = position;
     }
 
     public String getPathThumb() {

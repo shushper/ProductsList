@@ -3,7 +3,7 @@
 
     <string name="app_name">ProductsList</string>
 
-    <!-- Start Fragment -->
+    <!-- Main Fragment -->
     <string name="btn_download">Загрузить</string>
 
     <!-- List Fragment -->

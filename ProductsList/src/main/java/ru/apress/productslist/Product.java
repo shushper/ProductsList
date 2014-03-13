@@ -3,11 +3,11 @@ package ru.apress.productslist;
 /**
  * Created by shushper on 12.03.14.
  */
-public class ProductObj {
+public class Product {
     private int mId;
     private String mName;
     private int mImagesCnt;
-    private ImageObj[] mImages;
+    private Image[] mImages;
 
     public int getId() {
         return mId;
@@ -33,11 +33,11 @@ public class ProductObj {
         this.mImagesCnt = imagesCnt;
     }
 
-    public ImageObj[] getImages() {
+    public Image[] getImages() {
         return mImages;
     }
 
-    public void setImages(ImageObj[] images) {
+    public void setImages(Image[] images) {
         this.mImages = images;
     }
 }

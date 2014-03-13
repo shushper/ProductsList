@@ -1,5 +1,9 @@
 package ru.apress.productslist;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
@@ -75,5 +79,47 @@ public class Utils {
             result = null;
         }
         return result;
+    }
+
+    public static Product[] parseJson(String jsonStr){
+        Product[] productObjs = null;
+        try {
+            JSONObject jsonObject = new JSONObject(jsonStr);
+            JSONObject content = jsonObject.getJSONObject("content");
+            JSONArray productsArr = content.getJSONArray("products");
+            productObjs = new Product[productsArr.length()];
+
+            for(int i = 0; i < productsArr.length(); i++) {
+                Product productObj = new Product();
+
+                JSONObject product = productsArr.getJSONObject(i);
+                productObj.setId(product.getInt("id"));
+                productObj.setName(product.getString("name"));
+                productObj.setImagesCnt(product.getInt("images_cnt"));
+
+                JSONArray imagesArr = product.getJSONArray("images");
+                Image[] imageObjs = new Image[imagesArr.length()];
+
+                for (int k = 0; k < imagesArr.length(); k++) {
+                    Image imageObj = new Image();
+
+                    JSONObject image = imagesArr.getJSONObject(k);
+                    imageObj.setId(image.getInt("id"));
+                    imageObj.setPos(image.getInt("position"));
+                    imageObj.setPathThumb(image.getString("path_thumb"));
+                    imageObj.setPathBig(image.getString("path_big"));
+
+                    imageObjs[k] = imageObj;
+                }
+
+                productObj.setImages(imageObjs);
+                productObjs[i] = productObj;
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            productObjs = null;
+        }
+        return productObjs;
     }
 }
