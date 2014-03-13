@@ -14,6 +14,8 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.nostra13.universalimageloader.core.ImageLoader;
+
 
 /**
  * A simple {@link android.support.v4.app.Fragment} subclass.
@@ -64,10 +66,11 @@ public class ListFragment extends Fragment {
         private final String TAG = "ProductsAdapter";
 
         private LayoutInflater mInflater;
+        private ImageLoader mImageLoader;
 
         private ProductsAdapter() {
-
             mInflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            mImageLoader = ImageLoader.getInstance();
         }
 
         @Override
@@ -113,9 +116,14 @@ public class ListFragment extends Fragment {
             }
 
             ProductObj productObj = getItem(position);
+            int imagesCnt = productObj.getImagesCnt();
+            String imagesCntStr = String.format(getString(R.string.images_cnt), imagesCnt);
+            String imageUri = productObj.getImages()[0].getPathThumb();
 
             holder.name.setText(productObj.getName());
-            holder.imagesCnt.setText(String.valueOf(productObj.getImagesCnt()));
+            holder.imagesCnt.setText(imagesCntStr);
+
+            mImageLoader.displayImage(imageUri, holder.image);
 
             return convertView;
         }

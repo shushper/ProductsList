@@ -8,5 +8,6 @@
 
     <!--  List Fragment  -->
     <string name="btn_clear">Clear</string>
+    <string name="images_cnt">%1$s photo</string>
 
 </resources>
