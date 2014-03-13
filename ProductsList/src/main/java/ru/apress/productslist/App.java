@@ -1,6 +1,7 @@
 package ru.apress.productslist;
 
 import android.app.Application;
+import android.content.Context;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -11,12 +12,19 @@ import com.nostra13.universalimageloader.core.assist.ImageScaleType;
  * Created by shushper on 13.03.14.
  */
 public class App extends Application {
+    private static Context mContext;
+
 
     @Override
     public void onCreate() {
         super.onCreate();
+        mContext = getApplicationContext();
 
         initImageLoader();
+    }
+
+    public static Context getContext() {
+        return mContext;
     }
 
     private void initImageLoader() {

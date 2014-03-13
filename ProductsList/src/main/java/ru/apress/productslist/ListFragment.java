@@ -1,6 +1,7 @@
 package ru.apress.productslist;
 
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -21,9 +22,9 @@ import com.nostra13.universalimageloader.core.ImageLoader;
  * A simple {@link android.support.v4.app.Fragment} subclass.
  *
  */
-public class ListFragment extends Fragment {
+public class ListFragment extends Fragment implements View.OnClickListener {
     private final String TAG = "ListFragment";
-    private final boolean D = false;
+    private final boolean D = true;
 
     private ListView mProductsList;
     private Button mClearBtn;
@@ -31,8 +32,19 @@ public class ListFragment extends Fragment {
     private Product[] mProducts;
     private ProductsAdapter mAdapter;
 
-    public ListFragment() {
-        // Required empty public constructor
+    private ListFragmentListener mListener;
+
+    public ListFragment() {}
+
+    @Override
+    public void onAttach(Activity activity) {
+        if(D) Log.v(TAG, "onAttach");
+        super.onAttach(activity);
+        try {
+            mListener = (ListFragmentListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString() + " must implement ListFragmentListener");
+        }
     }
 
     @Override
@@ -49,6 +61,7 @@ public class ListFragment extends Fragment {
 
         mProductsList = (ListView) view.findViewById(R.id.lv_products);
         mClearBtn = (Button) view.findViewById(R.id.btn_clear);
+        mClearBtn.setOnClickListener(this);
 
         mAdapter = new ProductsAdapter();
         mProductsList.setAdapter(mAdapter);
@@ -61,6 +74,24 @@ public class ListFragment extends Fragment {
         if(D) Log.v(TAG, "updateWithNewData");
         mProducts = productObjs;
         if (mAdapter != null) mAdapter.notifyDataSetChanged();
+    }
+
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.btn_clear:
+                mProducts = null;
+                mListener.onClearBtnClick();
+                break;
+            default:
+
+                break;
+        }
+    }
+
+    public interface ListFragmentListener{
+        public void onClearBtnClick();
     }
 
     private class ProductsAdapter extends BaseAdapter {
@@ -99,7 +130,7 @@ public class ListFragment extends Fragment {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            if(D) Log.v(TAG, "getView");
+//            if(D) Log.v(TAG, "getView");
 //            if(D) Log.d(TAG, "position = " + position);
             ViewHolder holder;
             if (convertView == null) {

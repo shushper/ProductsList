@@ -36,31 +36,12 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    public MainFragment() {
-        // Required empty public constructor
-    }
+    public MainFragment() {}
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         if(D) Log.v(TAG, "onCreate");
         super.onCreate(savedInstanceState);
-
-//        FragmentManager fm = getFragmentManager();
-//        mDownloadFragment = (DownloadTaskFragment) fm.findFragmentByTag("DownloadTaskFragment");
-
-//        if (mDownloadFragment == null) {
-//            if(D) Log.i(TAG, "DownloadFragment doesn't exist. Create new one.");
-//            mDownloadFragment = new DownloadTaskFragment();
-//            mDownloadFragment.setDownloadTaskFragmentListener(this);
-//            fm.beginTransaction().add(mDownloadFragment, "DownloadTaskFragment").commit();
-//        } else {
-//            if(D) Log.i(TAG, "DownloadFragment exist");
-//            mDownloadFragment.setDownloadTaskFragmentListener(this);
-//            if (mDownloadFragment.getState() == DownloadTaskFragment.STATE_DOWNLOAD_COMPLETE) {
-//                if(D) Log.i(TAG, "ProductObjs have been downloaded. Take it!");
-//                takeProductObjsFromTaskFragment();
-//            }
-//        }
     }
 
     @Override
@@ -96,56 +77,20 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     }
 
     public void setDownloadBtnEnable(boolean enable) {
-        mDownloadBtn.setEnabled(enable);
+        if (mDownloadBtn != null) {
+            mDownloadBtn.setEnabled(enable);
+        }
     }
 
     public void setProgressVisible(boolean visible) {
         int visibility = visible ? View.VISIBLE : View.INVISIBLE;
-        mProgressBar.setVisibility(visibility);
+
+        if (mProgressBar != null) {
+            mProgressBar.setVisibility(visibility);
+        }
+
     }
 
-//    private void takeProductObjsFromTaskFragment () {
-//        if(D) Log.v(TAG, "takeProductObjsFromTaskFragment");
-//        Product[] objs = mDownloadFragment.getProductObjs();
-//        mDownloadFragment.setState(DownloadTaskFragment.STATE_IDLE);
-//
-//        if(objs != null) {
-//            mListener.onProductsListDownloaded(objs);
-//        }
-//    }
-//
-//    private void startDownloadFile() {
-//        if(D) Log.v(TAG, "startDownloadFile");
-//        if (mDownloadFragment != null) {
-//            mDownloadFragment.starDownload();
-//        }
-//    }
-
-//    @Override
-//    public void onPreExecute() {
-//        if(D) Log.v(TAG, "onPreExecute");
-//        mDownloadBtn.setEnabled(false);
-//        mProgressBar.setVisibility(View.VISIBLE);
-//    }
-//
-//    @Override
-//    public void onPostExecute() {
-//        if(D) Log.v(TAG, "onPostExecute");
-//        mDownloadBtn.setEnabled(true);
-//        mProgressBar.setVisibility(View.INVISIBLE);
-//
-//        takeProductObjsFromTaskFragment();
-//    }
-//
-//    @Override
-//    public void onCancelled() {
-//        if(D) Log.v(TAG, "onPostExecute");
-//        mDownloadBtn.setEnabled(true);
-//        mProgressBar.setVisibility(View.INVISIBLE);
-//
-//    }
-//
-//
     public interface MainFragmentListener {
         public void onDownloadBtnClick();
     }

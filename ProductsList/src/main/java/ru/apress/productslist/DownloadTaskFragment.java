@@ -80,9 +80,14 @@ public class DownloadTaskFragment extends Fragment {
         return mState;
     }
 
-    public Product[] getProductObjs() {
-        if(D) Log.v(TAG, "getProductObjs");
+    public Product[] getProducts() {
+        if(D) Log.v(TAG, "getProduct");
         return mProducts;
+    }
+
+    public void setProducts(Product[] products) {
+        if(D) Log.v(TAG, "setProducts");
+        this.mProducts = products;
     }
 
     public void starDownload() {
@@ -93,7 +98,7 @@ public class DownloadTaskFragment extends Fragment {
         }
     }
 
-    public boolean productsDownloaded () {
+    public boolean wereProductsDownloaded() {
         return mProducts != null;
     }
 
@@ -122,6 +127,7 @@ public class DownloadTaskFragment extends Fragment {
                 InputStream is = new BufferedInputStream(connection.getInputStream());
                 Utils.saveInputStreamToFile(is, file);
 
+                mListener.onFileDownloaded(file);
                 Thread.sleep(5000);
 
                 String jsonStr = Utils.readFile(file);
@@ -159,6 +165,7 @@ public class DownloadTaskFragment extends Fragment {
     }
 
     public interface DownloadTaskFragmentListener{
+        public void onFileDownloaded(File file);
         public void onPreExecute();
         public void onPostExecute();
         public void onCancelled();
