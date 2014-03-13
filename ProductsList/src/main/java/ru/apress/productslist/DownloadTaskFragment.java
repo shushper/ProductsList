@@ -1,7 +1,5 @@
 package ru.apress.productslist;
 
-
-
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -16,14 +14,14 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-
 /**
- * A simple {@link android.support.v4.app.Fragment} subclass.
- *
+ * Этот фрагмент не имеет графического интерфейса и служит для
+ * хранениния AsyncTask'a и массива продуктов. Сохранет своё состояние
+ * при изменении конфигурации устройства (например, при смене ориентации).
  */
 public class DownloadTaskFragment extends Fragment {
     private final String TAG = "DownloadTaskFragment";
-    private final boolean D = true;
+    private final boolean D = false;
 
     private final String FILE_URL = "http://railsc.ru/resp.txt";
     private final String FILE_NAME = "resp.txt";
@@ -32,11 +30,13 @@ public class DownloadTaskFragment extends Fragment {
     public final static int STATE_DOWNLOADING       = 1;
     public final static int STATE_DOWNLOAD_COMPLETE = 2;
 
-    private int mState;
+    private int mState; //состояние загрузки
 
     private DownloadTaskFragmentListener mListener;
     private DownloadTask mTask;
 
+    /* Список продуктов храниться даже при изменении
+       конфигурации устройста */
     private Product[] mProducts;
 
     public DownloadTaskFragment() {
@@ -98,10 +98,19 @@ public class DownloadTaskFragment extends Fragment {
         }
     }
 
+    /**
+     * Проверяет наличие ненулевого массива с продуктами.
+     *
+     * @return <b>true</b> если массив присутствует и <b>false</b> если он равен null.
+     */
     public boolean wereProductsDownloaded() {
         return mProducts != null;
     }
 
+    /**
+     * Скачивает файл с сервера, сохраняет его во внутреннюю память и парсит этот
+     * файл в массив продуктов.
+     */
     private class DownloadTask extends AsyncTask<Void, Void, Product[] > {
 
         @Override
@@ -126,19 +135,13 @@ public class DownloadTaskFragment extends Fragment {
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 InputStream is = new BufferedInputStream(connection.getInputStream());
                 Utils.saveInputStreamToFile(is, file);
-
                 mListener.onFileDownloaded(file);
-                Thread.sleep(5000);
-
                 String jsonStr = Utils.readFile(file);
                 products = Utils.parseJson(jsonStr);
 
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             } catch (IOException e) {
-                e.printStackTrace();
-            }
-            catch (InterruptedException e) {
                 e.printStackTrace();
             }
             return products;

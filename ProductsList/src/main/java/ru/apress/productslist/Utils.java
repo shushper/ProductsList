@@ -14,11 +14,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-/**
- * Created by shushper on 12.03.14.
- */
+
 public class Utils {
 
+    /**
+     * Записывает входной поток в файл.
+     * @param in входной поток
+     * @param file файл, в который будет записано входно поток
+     * @return <b>true</b> если запись прошла успешно, иначе <b>false</b>
+     */
     public static boolean saveInputStreamToFile(InputStream in, File file) {
         boolean success = true;
         OutputStream out = null;
@@ -51,6 +55,13 @@ public class Utils {
         return success;
     }
 
+
+    /**
+     * Читает из файла символьный поток и переводит его в
+     * объект String.
+     * @param file файл, из которого будет производится чтение
+     * @return строка, полученная из файла
+     */
     public static String readFile(File file) {
         String result = null;
         BufferedReader reader = null;
@@ -60,9 +71,10 @@ public class Utils {
                 reader = new BufferedReader(new FileReader(file));
                 StringBuilder sb = new StringBuilder();
 
-                String line = null;
+                String line;
                 while ((line = reader.readLine()) != null) {
-                    sb.append(line + "\n");
+                    sb.append(line);
+                    sb.append("\n");
                 }
 
                 result = sb.toString();
@@ -72,7 +84,7 @@ public class Utils {
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {
-                reader.close();
+                if(reader != null) reader.close();
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -81,8 +93,13 @@ public class Utils {
         return result;
     }
 
+    /**
+     * Парсит строку в формате JSON в удобный нам массив продуктов.
+     * @param jsonStr строка в формате JSON
+     * @return массив объектов типа {@link ru.apress.productslist.Product}
+     */
     public static Product[] parseJson(String jsonStr){
-        Product[] productObjs = null;
+        Product[] productObjs;
         try {
             JSONObject jsonObject = new JSONObject(jsonStr);
             JSONObject content = jsonObject.getJSONObject("content");

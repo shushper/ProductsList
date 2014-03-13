@@ -15,7 +15,7 @@ import ru.apress.productslist.ListFragment.ListFragmentListener;
 
 public class MainActivity extends ActionBarActivity implements MainFragmentListener, DownloadTaskFragmentListener, ListFragmentListener{
     private final String TAG = "MainActivity";
-    private final boolean D = true;
+    private final boolean D = false;
 
     private MainFragment mMainFragment;
     private ListFragment mListFragment;
@@ -35,6 +35,13 @@ public class MainActivity extends ActionBarActivity implements MainFragmentListe
         mDownloadFragment = (DownloadTaskFragment) mFragmentManager.findFragmentByTag("DownloadTaskFragment");
 
         if (mDownloadFragment == null) {
+            /*
+             * При первом запуске приложения создадим объект фрагмента DownloadTaskFragment.
+             * Он будет служить для сохранения AsyncTask'a и массива от воздействия
+             * изменения конфигурации устройства (смена ориентации дисплея)
+             */
+
+
             if(D) Log.i(TAG, "DownloadFragment doesn't exist. Create new one.");
             mDownloadFragment = new DownloadTaskFragment();
             mFragmentManager.beginTransaction().add(mDownloadFragment, "DownloadTaskFragment").commit();
@@ -43,33 +50,52 @@ public class MainActivity extends ActionBarActivity implements MainFragmentListe
             if (!b) showMainFragment();
 
         } else {
+            /*
+             * При изменении конфигурации устройства находим DownloadTaskFragment и провереям состояние
+             * загрузки списка продуктов.
+             */
             if(D) Log.i(TAG, "DownloadFragment exist. Check state.");
             checkDownloadFragmentState();
         }
     }
 
+    /**
+     * Проверяет состояние загрузки списка продуктов и предпринимает
+     * различные пути поведения в зависимости от этого состояния.
+     */
     private void checkDownloadFragmentState() {
         switch (mDownloadFragment.getState()) {
             case DownloadTaskFragment.STATE_DOWNLOAD_COMPLETE:
                 if(D) Log.i(TAG, "STATE_DOWNLOAD_COMPLETE");
                 mDownloadFragment.setState(DownloadTaskFragment.STATE_IDLE);
+                /* Файл не грузится. Проверяем наличие массива продуктов и есил их нет
+                 * то оображаем MainFragment */
                 boolean b = checkProducts();
                 if (!b) showMainFragment();
                 break;
 
             case DownloadTaskFragment.STATE_DOWNLOADING:
                 if(D) Log.i(TAG, "STATE_DOWNLOADING");
-                //Do nothing. Wating for callback.
+                /* Если файл ещё грузится, ничено не делаем. Ждём
+                 * срабатывания колбэка */
                 break;
 
             case DownloadTaskFragment.STATE_IDLE:
                 if(D) Log.i(TAG, "STATE_IDLE");
+                /* Файл не грузится. Проверяем наличие массива продуктов и есил их нет
+                 * то оображаем MainFragment */
                 boolean bo = checkProducts();
                 if (!bo) showMainFragment();
                 break;
         }
     }
 
+    /**
+     * Проверяет, не был ли скачан файл с продуктами в
+     * предыдущие сессии приложения. Если файл был скачан,
+     * парсим его и отображем список продуктов.
+     * @return <b>true</b> если файл был скачан, иначе <b>false</b>
+     */
     private boolean checkFile() {
         if(D) Log.v(TAG, "checkFile");
         boolean fileWasDownloaded = Prefs.wasFileDownloaded();
@@ -88,6 +114,12 @@ public class MainActivity extends ActionBarActivity implements MainFragmentListe
         }
     }
 
+    /**
+     * Проверяет, не хранится ли в фрагменте {@link ru.apress.productslist.DownloadTaskFragment}
+     * массив с продуктами. Если да, то просто отображаем список продуктов
+     * из массива.
+     * @return <b>true</b> если {@link ru.apress.productslist.DownloadTaskFragment} хранит в себе ненулевой массив продуктов, иначе <b>false</b>
+     */
     private boolean checkProducts() {
         if(D) Log.v(TAG, "checkProducts");
         boolean productsWereDownloaded = mDownloadFragment.wereProductsDownloaded();
@@ -160,11 +192,22 @@ public class MainActivity extends ActionBarActivity implements MainFragmentListe
         }
     }
 
+
+    /**
+     * Очищаем всю информации о продуктах (массив продуктов, JSON файл с описанием
+     * продуктов)
+     */
     private void clearAllProductsInfo() {
         if(D) Log.v(TAG, "startDownloadFile");
+
+        File file = new File(Prefs.getFilePath());
+        if (file.exists()) file.delete();
+
         mDownloadFragment.setProducts(null);
+
         Prefs.setFilePath("");
         Prefs.setFileWasDownloaded(false);
+
         showMainFragment();
     }
 

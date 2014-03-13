@@ -13,12 +13,12 @@ import android.widget.ProgressBar;
 
 
 /**
- * A simple {@link android.support.v4.app.Fragment} subclass.
- *
+ * Фрагмент отображет кноку "загрузить" и прогресс бар, отображающий
+ * процесс загрузки файла.
  */
 public class MainFragment extends Fragment implements View.OnClickListener {
     private final String TAG = "MainFragment";
-    private final boolean D = true;
+    private final boolean D = false;
 
 
     private Button mDownloadBtn;

@@ -19,12 +19,14 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 
 
 /**
- * A simple {@link android.support.v4.app.Fragment} subclass.
+ * Фрагмент отображает список продуктов. Кнопка "очистить"
+ * стирает все данные о продуктах и возвращает на экран
+ * с MainFragment.
  *
  */
 public class ListFragment extends Fragment implements View.OnClickListener {
     private final String TAG = "ListFragment";
-    private final boolean D = true;
+    private final boolean D = false;
 
     private ListView mProductsList;
     private Button mClearBtn;
@@ -69,10 +71,14 @@ public class ListFragment extends Fragment implements View.OnClickListener {
         return view;
     }
 
-
-    public void updateWithNewData(Product[] productObjs) {
+    /**
+     * Принуждает фрагмент обновить список продуктов
+     * в соответсвии с данными из массива <b>products</b>
+     * @param products массив с объектами типа {@link ru.apress.productslist.Product}
+     */
+    public void updateWithNewData(Product[] products) {
         if(D) Log.v(TAG, "updateWithNewData");
-        mProducts = productObjs;
+        mProducts = products;
         if (mAdapter != null) mAdapter.notifyDataSetChanged();
     }
 
@@ -94,9 +100,10 @@ public class ListFragment extends Fragment implements View.OnClickListener {
         public void onClearBtnClick();
     }
 
+    /**
+     * Адаптер для списка продуктов.
+     */
     private class ProductsAdapter extends BaseAdapter {
-        private final String TAG = "ProductsAdapter";
-
         private LayoutInflater mInflater;
         private ImageLoader mImageLoader;
 
@@ -130,8 +137,6 @@ public class ListFragment extends Fragment implements View.OnClickListener {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-//            if(D) Log.v(TAG, "getView");
-//            if(D) Log.d(TAG, "position = " + position);
             ViewHolder holder;
             if (convertView == null) {
                 convertView = mInflater.inflate(R.layout.list_item_products, null);
@@ -155,6 +160,7 @@ public class ListFragment extends Fragment implements View.OnClickListener {
             holder.name.setText(productObj.getName());
             holder.imagesCnt.setText(imagesCntStr);
 
+            /* отображаем миниатюру первой фотографии продукта */
             mImageLoader.displayImage(imageUri, holder.image);
 
             return convertView;

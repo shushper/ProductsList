@@ -1,12 +1,17 @@
 package ru.apress.productslist;
 
 /**
- * Created by shushper on 12.03.14.
+ * Класс хранит в себе информации об одном продкуте.
  */
 public class Product {
+
+    /* id продукта */
     private int mId;
+    /* имя продукта */
     private String mName;
+    /* количество изображений */
     private int mImagesCnt;
+    /* массив изображений*/
     private Image[] mImages;
 
     public int getId() {
