@@ -1,16 +1,20 @@
 package ru.apress.productslist;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.io.File;
 
 import ru.apress.productslist.DownloadTaskFragment.DownloadTaskFragmentListener;
-import ru.apress.productslist.MainFragment.MainFragmentListener;
 import ru.apress.productslist.ListFragment.ListFragmentListener;
+import ru.apress.productslist.MainFragment.MainFragmentListener;
 
 
 public class MainActivity extends ActionBarActivity implements MainFragmentListener, DownloadTaskFragmentListener, ListFragmentListener{
@@ -150,7 +154,25 @@ public class MainActivity extends ActionBarActivity implements MainFragmentListe
 
     @Override
     public void onDownloadBtnClick() {
-        startDownloadFile();
+        if (checkInternetConnection()) {
+            startDownloadFile();
+        }
+    }
+
+    /**
+     * Проверяет наличие подключения к интернету.
+     * @return <b>true</b> если подключение к интернет установлено, иначе <b>false</b>
+     */
+    private boolean checkInternetConnection() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo info = cm.getActiveNetworkInfo();
+
+        if (info != null && info.isConnected()) {
+            return true;
+        } else {
+            Toast.makeText(this, R.string.msg_check_internet_connection, Toast.LENGTH_SHORT).show();
+            return false;
+        }
     }
 
     @Override

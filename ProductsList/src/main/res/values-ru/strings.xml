@@ -5,6 +5,7 @@
 
     <!-- Main Fragment -->
     <string name="btn_download">Загрузить</string>
+    <string name="msg_check_internet_connection">Проверьте ваше интернет подключение</string>
 
     <!-- List Fragment -->
     <string name="btn_clear">Очистить</string>

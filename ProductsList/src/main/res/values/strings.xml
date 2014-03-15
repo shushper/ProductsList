@@ -5,6 +5,7 @@
 
     <!-- Main Fragment -->
     <string name="btn_download">Download</string>
+    <string name="msg_check_internet_connection">Check your internet connection</string>
 
     <!-- List Fragment -->
     <string name="btn_clear">Clear</string>
